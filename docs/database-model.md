@@ -99,6 +99,8 @@ Armazena todos os eventos registrados pelo usuário: abastecimentos e checkpoint
 | data | timestamp | Data e hora do registro |
 | odometro | decimal(10,2) | Leitura do hodômetro total no momento do registro |
 | quantidade | decimal(8,3) | Quantidade abastecida em L ou kWh (nulo para checkpoints) |
+| valor_total | decimal(10,2) | Valor total pago no abastecimento (opcional) |
+| valor_unitario | decimal(10,4) | Preço por litro ou por kWh (opcional) |
 | tanque_cheio | boolean | Indica se o tanque foi completamente abastecido (atalho para 100%) |
 | percentual_tanque | decimal(5,2) | Percentual estimado do tanque líquido no momento do registro |
 | percentual_bateria | decimal(5,2) | Percentual da bateria no momento do registro |
@@ -131,6 +133,6 @@ O consumo de tanque completo pode ser calculado de duas formas: como média pond
 
 Cada registro de consumo possui um nível de confiança que reflete a precisão do cálculo com base nas informações disponíveis:
 
-- **Alta precisão:** ambos os tanques estavam cheios no abastecimento de origem e apenas um tipo de combustível foi utilizado no intervalo. O cálculo é exato.
+- **Precisão alta:** ambos os tanques estavam cheios no abastecimento de origem e apenas um tipo de combustível foi utilizado no intervalo. O cálculo é exato.
 - **Precisão média:** o usuário forneceu informações adicionais como percentual da bateria, percentual do tanque ou checkpoints intermediários.
-- **Precisão estimada:** apenas dados básicos de abastecimento e hodômetro estão disponíveis. O sistema utiliza médias históricas de consumo do veículo para estimar a distribuição entre os combustíveis.
+- **Precisão baixa:** apenas dados básicos de abastecimento e hodômetro estão disponíveis. O sistema utiliza médias históricas de consumo do veículo para estimar a distribuição entre os combustíveis.
