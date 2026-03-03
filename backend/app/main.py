@@ -1,9 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from .database import engine, Base
-
-# Garante que as tabelas do banco de dados estão sincronizadas com o SQLAlchemy
-Base.metadata.create_all(bind=engine)
+from app.database import engine, Base
+from app.routes.usuario import router as usuario_router
 
 # Inicia o aplicativo FastAPI
 app = FastAPI(
@@ -21,6 +19,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Garante que as tabelas do banco de dados estão sincronizadas com o SQLAlchemy
+Base.metadata.create_all(bind=engine)
+
+app.include_router(usuario_router)
 # Rota de teste simples para sabermos se o servidor está online
 @app.get("/")
 def root():
