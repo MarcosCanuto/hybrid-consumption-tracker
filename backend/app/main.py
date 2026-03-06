@@ -2,6 +2,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.database import engine, Base
 from app.routes.usuario import router as usuario_router
+from app.routes.veiculo import router as veiculo_router
+from app.routes.tanque import router as tanque_router
 
 # Inicia o aplicativo FastAPI
 app = FastAPI(
@@ -23,6 +25,9 @@ app.add_middleware(
 Base.metadata.create_all(bind=engine)
 
 app.include_router(usuario_router)
+app.include_router(veiculo_router)
+app.include_router(tanque_router)
+
 # Rota de teste simples para sabermos se o servidor está online
 @app.get("/")
 def root():
