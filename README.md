@@ -34,11 +34,11 @@ As tecnologias a serem aplicadas poderão sofrer mudanças durante o desenvolvim
 
 | Camada | Tecnologia |
 |--------|-----------|
-| Front-end | React, Tailwind CSS |
-| Back-end | Python com FastAPI |
+| Front-end | React, React Router, Axios, Recharts, Tailwind CSS |
+| Back-end | Python com FastAPI, SQLAlchemy, Alembic, Pydantic |
 | Banco de dados | PostgreSQL |
-| Testes | a definir |
-| Deploy | a definir |
+| Testes | Pytest, Vitest |
+| Deploy | Vercel (front-end), Railway (back-end e banco) |
 
 ## Status do projeto
 
@@ -46,8 +46,8 @@ As tecnologias a serem aplicadas poderão sofrer mudanças durante o desenvolvim
 
 - [x] Definição do problema e solução
 - [x] Decisões de arquitetura
-- [ ] Modelagem do banco de dados
-- [ ] Back-end — endpoints básicos
+- [x] Modelagem do banco de dados
+- [x] Back-end — endpoints básicos
 - [ ] Lógica de cálculo de consumo e nível de confiança
 - [ ] Front-end
 - [ ] Testes
