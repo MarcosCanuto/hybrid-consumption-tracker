@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from app.database import get_db
 from app.models.registro import Registro
 from app.schemas.registro import RegistroCreate, RegistroResponse
+from app.services.calculo_consumo import calcular_consumo
 
 router = APIRouter(
     prefix="/registros",
@@ -35,6 +36,7 @@ def criar_registro(id_veiculo: int, registro: RegistroCreate, db: Session = Depe
     db.add(novo_registro)
     db.commit()
     db.refresh(novo_registro)
+    calcular_consumo(db, novo_registro)  # Calcula consumo após criar o registro
     return novo_registro
 
 @router.get("/veiculo/{veiculo_id}", response_model=list[RegistroResponse])
