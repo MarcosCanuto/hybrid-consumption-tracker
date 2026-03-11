@@ -34,3 +34,9 @@ Motivação: Nesses veículos não há um segundo "abastecimento" elétrico regi
 7. Stack tecnológica
 Decisão: React no front-end, FastAPI + Python no back-end, PostgreSQL como banco de dados.
 Motivação: As tecnologias foram escolhidas considerando o conhecimento prévio do desenvolvedor (React, Python, SQL), a popularidade no mercado de trabalho brasileiro, e a disponibilidade de planos gratuitos para deploy (Vercel, Railway).
+
+8. Desenvolvimento iterativo da lógica de consumo
+
+Decisão: A lógica de cálculo de consumo será desenvolvida de forma iterativa, começando pelo cenário de alta precisão e expandindo para os demais conforme o sistema for testado na prática.
+
+Motivação: Desenvolver toda a lógica na teoria antes de testar aumenta o risco de implementar cenários que nunca ocorrem ou de forma incorreta. O uso real do sistema com dados reais guia naturalmente quais cenários precisam ser cobertos e como.

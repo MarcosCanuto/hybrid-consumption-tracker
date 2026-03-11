@@ -48,8 +48,10 @@ As tecnologias a serem aplicadas poderão sofrer mudanças durante o desenvolvim
 - [x] Decisões de arquitetura
 - [x] Modelagem do banco de dados
 - [x] Back-end — endpoints básicos
-- [ ] Lógica de cálculo de consumo e nível de confiança
-- [ ] Front-end
+- [x] Lógica de cálculo de consumo - versão inicial (alta precisão)
+- [ ] Lógica de cálculo de consumo - demais casos
+- [ ] Front-end - protótipo para validação
+- [ ] Front-end - versão completa
 - [ ] Testes
 - [ ] Deploy
 
