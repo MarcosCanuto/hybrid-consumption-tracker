@@ -1,35 +1,108 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import api from '../services/api'
 
 export default function NovoRegistro() {
   const navigate = useNavigate()
+  const location = useLocation()
   const ID_VEICULO = 1
+  const odometroAnterior = location.state?.odometroAnterior || ''
 
   const [form, setForm] = useState({
     id_tanque: 1,
     id_combustivel: null,
     tipo: 'abastecimento',
-    data: new Date().toISOString().slice(0, 16),
-    odometro: '',
+    data: new Date().toISOString().slice(0, 16), // Formato para datetime-local
+    odometro: odometroAnterior, 
     quantidade: '',
     valor_total: '',
     valor_unitario: '',
-    tanque_cheio: false,
-    percentual_tanque: '',
-    percentual_bateria: '',
+    tanque_cheio: false, // Checar se for preenchido 100% no percentual do tanque ou da bateria
+    percentual_tanque: '', // Não está preenchendo quando clica no tanque cheio, apenas se for alterado o tanque
+    percentual_bateria: '', // Não está preenchendo quando clica no tanque cheio, apenas se for alterado o tanque
     observacao: ''
   })
 
   const [salvando, setSalvando] = useState(false)
   const [erro, setErro] = useState(null)
 
+  // Buscar o último registro para preencher o odômetro inicial e para verificação se o odometro informado é menor que o último registro
+  {/*useEffect(() => {
+    async function buscarUltimoOdometro() {
+      try {
+        const response = await api.get(`/registros/ultimo/${ID_VEICULO}`)
+        setForm(prev => ({
+          ...prev,
+          odometro: response.data.odometro
+        }))
+      } catch (error) {
+        console.error('Erro ao buscar último registro:', error)
+      }
+    }
+
+    buscarUltimoOdometro()
+  }, [ID_VEICULO]) */}
+
+
   function handleChange(e) {
     const { name, value, type, checked } = e.target
-    setForm(prev => ({
-      ...prev,
-      [name]: type === 'checkbox' ? checked : value
-    }))
+    const newValue = type === 'checkbox' ? checked : value
+    
+    setForm(prev => {
+      let updatedForm = { ...prev, [name]: newValue }
+
+      if (name === 'quantidade' && newValue !== '') {
+        if (updatedForm.valor_unitario !== '') {
+          updatedForm.valor_total = (parseFloat(newValue) * parseFloat(updatedForm.valor_unitario)).toFixed(2)
+        } else if (updatedForm.valor_total !== '') {
+        updatedForm.valor_unitario = (parseFloat(updatedForm.valor_total) / parseFloat(newValue || 1)).toFixed(4)
+        }
+      }
+      else if (name === 'valor_unitario' && newValue !== '') {
+        if (updatedForm.quantidade !== '') {
+          updatedForm.valor_total = (parseFloat(updatedForm.quantidade) * parseFloat(newValue)).toFixed(2)
+        } else if (updatedForm.valor_total !== '') {
+          updatedForm.quantidade = (parseFloat(updatedForm.valor_total) / parseFloat(newValue)).toFixed(3)
+        }
+      }
+      else if (name === 'valor_total' && newValue !== '') {
+        if (updatedForm.quantidade !== '' && parseFloat(updatedForm.quantidade) !== 0) {
+          updatedForm.valor_unitario = (parseFloat(newValue) / parseFloat(updatedForm.quantidade)).toFixed(4)
+        } else if (updatedForm.valor_unitario !== '' && parseFloat(updatedForm.valor_unitario) !== 0) {
+          updatedForm.quantidade = (parseFloat(newValue) / parseFloat(updatedForm.valor_unitario)).toFixed(3)
+        }
+      }
+
+      // Se marcar tanque cheio, preencher automaticamente o percentual do tanque ou da bateria dependendo do tipo de tanque
+      if (name === 'tanque_cheio' && newValue === true) {
+        if (updatedForm.id_tanque === '1') {
+          updatedForm.percentual_bateria = 100
+        } else if (updatedForm.id_tanque === '2') {
+          updatedForm.percentual_tanque = 100
+        }
+      }
+      // Se desmarcar tanque cheio, limpar os percentuais
+      else if (name === 'tanque_cheio' && newValue === false) {
+        if (updatedForm.id_tanque === '1') {
+          updatedForm.percentual_bateria = ''
+        } else if (updatedForm.id_tanque === '2') {
+          updatedForm.percentual_tanque = ''
+        }
+      }
+      // Se mudar o tipo de tanque enquanto tanque cheio estiver marcado, atualizar os percentuais
+      else if (name === 'id_tanque' && updatedForm.tanque_cheio) {
+        if (newValue === '1') {
+          updatedForm.percentual_bateria = 100
+          updatedForm.percentual_tanque = ''
+        } else if (newValue === '2') {
+          updatedForm.percentual_tanque = 100
+          updatedForm.percentual_bateria = ''
+        }
+      }
+
+      return updatedForm
+    }
+    )
   }
 
   async function handleSubmit(e) {
@@ -132,13 +205,13 @@ export default function NovoRegistro() {
         <div>
           <label className="block text-sm font-medium mb-1">% Bateria</label>
           <input type="number" min="0" max="100" name="percentual_bateria" value={form.percentual_bateria} onChange={handleChange}
-            className="w-full border rounded-lg p-2" />
+            className="w-full border rounded-lg p-2" disabled={form.tanque_cheio && form.id_tanque === '1'} />
         </div>
 
         <div>
           <label className="block text-sm font-medium mb-1">% Tanque combustível</label>
           <input type="number" min="0" max="100" name="percentual_tanque" value={form.percentual_tanque} onChange={handleChange}
-            className="w-full border rounded-lg p-2" />
+            className="w-full border rounded-lg p-2" disabled={form.tanque_cheio && form.id_tanque === '2'} />
         </div>
 
         <div>
