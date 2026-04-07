@@ -1,5 +1,5 @@
-from .usuario import UsuarioCreate, UsuarioResponse
-from .veiculo import VeiculoCreate, VeiculoResponse
-from .tanque import TanqueCreate, TanqueResponse
-from .tanque_combustivel import TanqueCombustivelCreate, TanqueCombustivelResponse
-from .registro import RegistroCreate, RegistroResponse
+from .usuarios import UsuarioCreate, UsuarioResponse
+from .veiculos import VeiculoCreate, VeiculoResponse
+from .tanques import TanqueCreate, TanqueResponse
+from .tanques_combustivel import TanqueCombustivelCreate, TanqueCombustivelResponse
+from .registros import RegistroCreate, RegistroResponse

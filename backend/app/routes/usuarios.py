@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.database import get_db
-from app.models.usuario import Usuario
-from app.schemas.usuario import UsuarioCreate, UsuarioResponse
+from app.models.usuarios import Usuarios
+from app.schemas.usuarios import UsuarioCreate, UsuarioResponse
 
 router = APIRouter(
     prefix="/usuarios",
@@ -11,14 +11,14 @@ router = APIRouter(
 
 @router.post("/", response_model=UsuarioResponse)
 def criar_usuario(usuario: UsuarioCreate, db: Session = Depends(get_db)):
-    existente = db.query(Usuario).filter(Usuario.email == usuario.email).first()
+    existente = db.query(Usuarios).filter(Usuarios.email == usuario.email).first()
     if existente:
         raise HTTPException(status_code=400, detail="E-mail já cadastrado")
     
-    novo_usuario = Usuario(
+    novo_usuario = Usuarios(
         nome=usuario.nome,
         email=usuario.email,
-        senha=usuario.senha,
+        senha_hash=usuario.senha,
         unidade_consumo_eletrico=usuario.unidade_consumo_eletrico,
         unidade_consumo_combustivel=usuario.unidade_consumo_combustivel
     )
@@ -29,7 +29,7 @@ def criar_usuario(usuario: UsuarioCreate, db: Session = Depends(get_db)):
 
 @router.get("/{usuario_id}", response_model=UsuarioResponse)
 def buscar_usuario(usuario_id: int, db: Session = Depends(get_db)):
-    usuario = db.query(Usuario).filter(Usuario.id == usuario_id).first()
+    usuario = db.query(Usuarios).filter(Usuarios.id == usuario_id).first()
     if not usuario:
         raise HTTPException(status_code=404, detail="Usuário não encontrado")
     return usuario

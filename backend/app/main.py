@@ -1,11 +1,11 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.database import engine, Base
-from app.routes.usuario import router as usuario_router
-from app.routes.veiculo import router as veiculo_router
-from app.routes.tanque import router as tanque_router
-from app.routes.registro import router as registro_router
-from app.routes.consumo import router as consumo_router
+from app.routes.usuarios import router as usuario_router
+from app.routes.veiculos import router as veiculo_router
+from app.routes.tanques import router as tanque_router
+from app.routes.registros import router as registro_router
+from app.routes.consumos import router as consumo_router
 
 # Inicia o aplicativo FastAPI
 app = FastAPI(

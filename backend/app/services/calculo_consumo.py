@@ -1,20 +1,22 @@
 from sqlalchemy.orm import Session
-from app.models.registro import Registro
-from app.models.consumo import Consumo
+from app.models.registros import Registros
+from app.models.consumos import Consumos
 from decimal import Decimal
 
-def calcular_consumo(db: Session, registro_atual: Registro) -> Consumo | None:
+from app.models.tanques import Tanques
+
+def calcular_consumo(db: Session, registro_atual: Registros) -> Consumos | None:
     # 1. Buscar odômetro anterior para o mesmo veículo, seja checkpoint ou abastecimento.
     registro_anterior = (
-        db.query(Registro).filter(
-            Registro.id_veiculo == registro_atual.id_veiculo,
-            Registro.id < registro_atual.id
-        ).order_by(Registro.data.desc()).first()
+        db.query(Registros).filter(
+            Registros.id_veiculo == registro_atual.id_veiculo,
+            Registros.id < registro_atual.id
+        ).order_by(Registros.data.desc()).first()
     )
 
     # Buscar capacidade da bateria e do tanque para calcular o consumo elétrico e de combustão, com base nas porcentagens (checkpoint).
-    from app.models.tanque import Tanque
-    tanques = db.query(Tanque).filter(Tanque.id_veiculo == registro_atual.id_veiculo).all()
+    from app.models.tanques import Tanques
+    tanques = db.query(Tanques).filter(Tanques.id_veiculo == registro_atual.id_veiculo).all()
     tanque_eletrico = next((t for t in tanques if t.tipo == "eletrico"), None)
     tanque_liquido = next((t for t in tanques if t.tipo == "liquido"), None)
 
@@ -54,7 +56,7 @@ def calcular_consumo(db: Session, registro_atual: Registro) -> Consumo | None:
     if registro_atual.tipo == "abastecimento" and (variacao_bateria == 0 or variacao_tanque == 0) and distancia > 0:
         consumo_eletrico = distancia / float(registro_atual.quantidade) if registro_atual.id_tanque == tanque_eletrico.id else None
         consumo_combustao = distancia / float(registro_atual.quantidade) if registro_atual.id_tanque == tanque_liquido.id else None
-        consumo = Consumo(
+        consumo = Consumos(
             id_registro_origem=registro_anterior.id,
             id_registro_destino=registro_atual.id,
             tipo="consumo do trecho",
