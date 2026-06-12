@@ -6,6 +6,7 @@ from app.routes.veiculos import router as veiculo_router
 from app.routes.tanques import router as tanque_router
 from app.routes.registros import router as registro_router
 from app.routes.consumos import router as consumo_router
+from app.routes.auth import router as auth_router
 
 # Inicia o aplicativo FastAPI
 app = FastAPI(
@@ -26,6 +27,7 @@ app.add_middleware(
 # Garante que as tabelas do banco de dados estão sincronizadas com o SQLAlchemy
 Base.metadata.create_all(bind=engine)
 
+app.include_router(auth_router)
 app.include_router(usuario_router)
 app.include_router(veiculo_router)
 app.include_router(tanque_router)

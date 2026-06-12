@@ -3,6 +3,11 @@ from sqlalchemy.orm import Session
 from app.database import get_db
 from app.models.registros import Registros
 from app.schemas.registros import RegistroCreate, RegistroResponse
+from app.auth import get_usuario_atual
+from app.models.usuarios import Usuarios
+from app.models.veiculos import Veiculos
+from app.models.tanques import Tanques
+from app.models.tanques_combustivel import TanquesCombustivel
 from app.services.calculo_consumo import calcular_consumo
 
 router = APIRouter(
@@ -10,8 +15,19 @@ router = APIRouter(
     tags=["Registros"]
 )
 
+def verificar_veiculo(veiculo_id: int, usuario: Usuarios, db: Session):
+    veiculo = db.query(Veiculos).filter(
+        Veiculos.id == veiculo_id,
+        Veiculos.id_usuario == usuario.id
+    ).first()
+    if not veiculo:
+        raise HTTPException(status_code=404, detail="Veículo não encontrado")
+    return veiculo
+
 @router.post("/", response_model=RegistroResponse)
-def criar_registro(id_veiculo: int, registro: RegistroCreate, db: Session = Depends(get_db)):
+def criar_registro(id_veiculo: int, registro: RegistroCreate, db: Session = Depends(get_db), usuario: Usuarios = Depends(get_usuario_atual)):
+    verificar_veiculo(id_veiculo, usuario, db)
+    
     if registro.tipo == "abastecimento" and registro.id_tanque is None:
         raise HTTPException(status_code=400, detail="Abastecimento requer id_tanque")
     

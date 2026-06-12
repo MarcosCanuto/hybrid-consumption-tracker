@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from app.database import get_db
 from app.models.usuarios import Usuarios
 from app.schemas.usuarios import UsuarioCreate, UsuarioResponse
+from app.auth import hash_senha, verificar_senha, criar_token, get_usuario_atual
 
 router = APIRouter(
     prefix="/usuarios",
@@ -27,9 +28,8 @@ def criar_usuario(usuario: UsuarioCreate, db: Session = Depends(get_db)):
     db.refresh(novo_usuario)
     return novo_usuario
 
-@router.get("/{usuario_id}", response_model=UsuarioResponse)
-def buscar_usuario(usuario_id: int, db: Session = Depends(get_db)):
-    usuario = db.query(Usuarios).filter(Usuarios.id == usuario_id).first()
-    if not usuario:
+@router.get("/me", response_model=UsuarioResponse)
+def meu_perfil(usuario_atual: Usuarios = Depends(get_usuario_atual)):
+    if not usuario_atual:
         raise HTTPException(status_code=404, detail="Usuário não encontrado")
-    return usuario
+    return usuario_atual
